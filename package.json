@@ -6,9 +6,18 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "chess.js": "^1.0.0-alpha.0",
+    "chessboardjsx": "^2.4.7",
+    "firebase": "^9.15.0",
     "react": "^18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
+    "react-firebase-hooks": "^5.1.1",
+    "react-router-dom": "^6.6.2",
     "react-scripts": "5.0.1",
+    "rxfire": "^6.0.3",
+    "rxjs": "^7.8.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
