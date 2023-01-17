@@ -4,6 +4,8 @@ import { gameSubject, initGame, resetGame } from './Game';
 import Board from './Board';
 import { useNavigate, useParams } from 'react-router-dom';
 import { db } from './firebase';
+import ReactLoading from 'react-loading'
+import { useStateContext } from './ContextProvider'
 
 function GameApp() {
   const [board, setBoard] = useState([]);
@@ -14,12 +16,17 @@ function GameApp() {
   const [game, setGame] = useState({})
   const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(true)
+  const [local, setLocal] = useState(false)
   const { id } = useParams()
   const navigate = useNavigate()
   const sharebleLink = window.location.href
+  const { currentColor } = useStateContext();
+
+  
 
   useEffect(() => {
     let subscribe
+    id === 'local' ? setLocal(true) : setLocal(false) 
     async function init() {
       const res = await initGame(id !== 'local' ? db.doc(`games/${id}`) : null )
       setInitResult(res)
@@ -46,7 +53,11 @@ function GameApp() {
   }
 
   if (loading) {
-    return 'Loading ...'
+    return (
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <ReactLoading type='bars' color='#0096FF' height={300} width={200}/>
+    </div>
+    )
   }
   if (initResult === 'notfound') {
     return 'Game Not found'
@@ -90,7 +101,17 @@ function GameApp() {
           </div>
         </div>
       )}
+      {
+        local && (
 
+          <div style={{display: 'flex', flexDirection: 'column', alignItems:'center' ,marginLeft: 40, padding: 20 }}>
+        <h3 style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Current turn</h3>
+        <div style={{ width: 90, height: 90, backgroundColor: currentColor === 'b' ? 'black' : 'white', borderRadius: 10  }}>
+        </div>
+      </div>
+        )
+        
+      }
     </div>
   );
 }

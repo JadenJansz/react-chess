@@ -1,15 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import BoardSquare from './BoardSquare'
+import { useStateContext } from './ContextProvider'
 
 const Board = ({ board, position }) => {
 
     const [currBoard, setCurrBoard] = useState([])
+    const [move, setMove] = useState()
+    const { setCurrentColor } = useStateContext();
 
     useEffect(() => {
         setCurrBoard(
             position === 'w' ? board.flat() : board.flat().reverse()
         )
+        setMove(localStorage.getItem('move'))
+        console.log(move)
+        setCurrentColor(localStorage.getItem('move'))
     }, [board, position])
+
+
+  useEffect(() => {
+    // console.log(move)
+    // setCurrentColor(localStorage.getItem('move'))
+  }, [move])
 
     const getXYPosition = (i) => {
         const x = position === 'w' ? i % 8 : Math.abs((i % 8) - 7)
@@ -17,7 +29,7 @@ const Board = ({ board, position }) => {
             position === 'w'
                 ? Math.abs(Math.floor(i / 8) - 7)
                 : Math.floor(i / 8)
-
+ 
         return {x,y}
     }
 

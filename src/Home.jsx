@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 export default function Home() {
     const { currentUser } = auth
     const [showModal, setShowModal] = useState(false)
+    const [local, setLocal] = useState(true)
     const history = useNavigate()
     const newGameOptions = [
         { label: 'Black pieces', value: 'b' },
@@ -14,6 +15,16 @@ export default function Home() {
 
     function handlePlayOnline() {
         setShowModal(true)
+        setLocal(false)
+    }
+
+    function handlePlayLocal(){
+        setLocal(true)
+        history(`/game/local`)
+    }
+
+    function startLocalGame(){
+        history(`/game/local`)
     }
 
     async function startOnlineGame(startingPiece) {
@@ -34,17 +45,24 @@ export default function Home() {
 
     return (
         <>
-            <div className="columns home">
-                <div className="column has-background-primary home-columns">
-                    <button className="button is-link">
-                        Play Locally
-                    </button>
+            <div className="columns home has-background-dark" >
+                <div style={{ borderRadius: '50%', display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-around' }}>
+                    <img src='https://static.vecteezy.com/system/resources/previews/004/742/414/original/chess-pawn-with-shadow-of-a-king-chess-vector.jpg' style={{ height: 700, borderRadius: '20%' }}/>
                 </div>
-                <div className="column has-background-link home-columns">
-                    <button className="button is-primary"
-                        onClick={handlePlayOnline}>
-                        Play Online
-                    </button>
+                <div className="column  home-columns" style={{ display: 'flex', flexDirection:'column', alignItems: 'flex-end'}}>
+                    <div style={{ display: 'flex', flexDirection:'column', justifyContent: 'space-between', width: 500, alignContent: 'space-between', height: 200, marginRight: 200 }}>
+
+                        <button className="button is-link is-large box" style={{ display:'flex' }}
+                            onClick={handlePlayOnline}>
+                            <img src={require('./assets/friend.png')} width={90} alt=''/>
+                            Play With Friend
+                        </button>
+                        <button className="button is-link is-large box" style={{ display: 'flex' }}
+                            onClick={handlePlayLocal}>
+                            <img src={require('./assets/human.png')} width={50} style={{ marginRight: 20 }} alt=''/>
+                            Play Local
+                        </button>
+                    </div>
                 </div>
             </div>
             <div className={`modal ${showModal ? 'is-active' : ''}`}>

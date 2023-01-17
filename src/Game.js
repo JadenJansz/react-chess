@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { auth } from './firebase'
 import { fromRef } from 'rxfire/firestore'
+import { useStateContext } from './ContextProvider'
 
 let gameRef
 let member
@@ -12,7 +13,6 @@ const chess = new Chess()
 export let gameSubject
 
 export async function initGame(gameRefFb) {
-
     const { currentUser } = auth
     if (gameRefFb) {
         gameRef = gameRefFb
@@ -83,7 +83,7 @@ export async function resetGame() {
 
 export function handleMove(from, to) {
     const promotions = chess.moves({ verbose: true }).filter(m => m.promotion)
-    console.table(promotions)
+    // console.table(promotions)
     let pendingPromotion
     if (promotions.some(p => `${p.from}:${p.to}` === `${from}:${to}`)) {
         pendingPromotion = { from, to, color: promotions[0].color }
@@ -96,24 +96,29 @@ export function handleMove(from, to) {
 }
 
 export function move(from, to, promotion) {
+    // const { setCurrentColor } = useStateContext();
+
     let tempMove = { from, to }
     console.log(from + " " + to)
     if (promotion) {
         tempMove.promotion = promotion
     }
     console.log({ tempMove, member }, chess.turn())
+    // setcurrentColor(chess.turn())
     if (gameRef) {
         if (member.piece === chess.turn()) {
             const legalMove = chess.move(tempMove)
             console.log(legalMove)
             if (legalMove) {
+                localStorage.setItem('move', chess.turn())
                 updateGame()
             }
         }
     } else {
         const legalMove = chess.move(tempMove)
-
+        
         if (legalMove) {
+            localStorage.setItem('move', chess.turn())
             updateGame()
         }
     }
@@ -143,16 +148,16 @@ async function updateGame(pendingPromotion, reset) {
 }
 
 function getGameResult() {
-    if (chess.in_checkmate()) {
+    if (chess.isCheckmate()) {
         const winner = chess.turn() === "w" ? 'BLACK' : 'WHITE'
         return `CHECKMATE - WINNER - ${winner}`
-    } else if (chess.in_draw()) {
+    } else if (chess.isDraw()) {
         let reason = '50 - MOVES - RULE'
-        if (chess.in_stalemate()) {
+        if (chess.isStalemate()) {
             reason = 'STALEMATE'
-        } else if (chess.in_threefold_repetition()) {
+        } else if (chess.isThreefoldRepetition()) {
             reason = 'REPETITION'
-        } else if (chess.insufficient_material()) {
+        } else if (chess.isInsufficientMaterial()) {
             reason = "INSUFFICIENT MATERIAL"
         }
         return `DRAW - ${reason}`
